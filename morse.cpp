@@ -17,14 +17,16 @@ int main() {
     };
 
     std::string sequence = "";
+    std::string word ="";
+    std::string message = "";
     int tiWithoutClick = 0;
-    int loopTimer = 1000;
+    int tiLoop = 1000;
 
-    while (tiWithoutClick < 7) {
+    while (true) {
         bool clickDetected = false;
         DWORD start = GetTickCount();
 
-        while (GetTickCount() - start < loopTimer) {
+        while (GetTickCount() - start < tiLoop) {
             if (GetAsyncKeyState(VK_LBUTTON) & 0x8000) {
                 sequence += ".";
                 tiWithoutClick = 0;
@@ -43,15 +45,20 @@ int main() {
         if (!clickDetected) {
             tiWithoutClick++;
         }
-        char lettre = morse.count(sequence) ? morse[sequence] : '?';
-        std::cout << "\r" << lettre << std::flush;
+        char letter = morse.count(sequence) ? morse[sequence] : '?';
+        std::cout << "\r" << message << word << letter << std::flush;
 
         if (tiWithoutClick >= 3) {
-            std::cout << std::endl;
+            if (letter != '?') {
+                word += letter;
+            }
             sequence = "";
         }
+        if (tiWithoutClick >= 7) {
+            message += word + " ";
+            word = "";
+            tiWithoutClick = 0;
+        }
     }
-    std::cout << " ";
-    tiWithoutClick = 0;
     return 0;
 }
